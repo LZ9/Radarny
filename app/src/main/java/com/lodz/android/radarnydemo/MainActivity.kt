@@ -16,12 +16,8 @@ class MainActivity : BaseActivity() {
     override fun findViews(savedInstanceState: Bundle?) {
         super.findViews(savedInstanceState)
         getTitleBarLayout().setTitleName(R.string.app_name)
-        getTitleBarLayout().setBackgroundColor(getColorCompat(R.color.color_da3320))
-    }
-
-    override fun onClickBackBtn() {
-        super.onClickBackBtn()
-        finish()
+        getTitleBarLayout().needBackButton(false)
+        getTitleBarLayout().setBackgroundColor(getColorCompat(R.color.color_a9e0e2))
     }
 
     override fun initData() {
