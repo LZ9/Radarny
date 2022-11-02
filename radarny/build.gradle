@@ -1,22 +1,19 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
 }
 
 android {
-    namespace 'com.lodz.android.radarnydemo'
+    namespace 'com.lodz.android.radarny'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.lodz.android.radarnydemo"
         minSdk 21
         targetSdk 33
         versionCode 1
         versionName "1.0"
-    }
 
-    viewBinding {
-        enabled = true
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
@@ -35,6 +32,5 @@ android {
 }
 
 dependencies {
-    implementation 'ink.lodz:pandora:2.0.3'
-    implementation project(path: ':radarny')
+    implementation 'androidx.annotation:annotation:1.5.0'
 }

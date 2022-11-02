@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--侧滑菜单-->
+    <declare-styleable name="RadarnyView">
+
+    </declare-styleable>
+
+
+</resources>
