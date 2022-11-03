@@ -2,10 +2,7 @@ package com.lodz.android.radarny
 
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.ColorInt
@@ -25,8 +22,12 @@ open class RadarnyView : View {
         const val DEF_FRAME_STROKE_WIDTH = 5
         /** 默认边框间距 */
         const val DEF_INNER_FRAME_PERCENTAGE = 0.3f
+        /** 默认文字离边框的间距 */
+        const val DEF_TEXT_PERCENTAGE = 1.2f
         /** 默认起始角度 */
         const val DEF_START_ANGLE = -90.0
+        /** 默认文字大小 */
+        const val DEF_TEXT_SIZE = 35f
 
     }
 
@@ -39,6 +40,8 @@ open class RadarnyView : View {
     private var mFramePadding = -1
     /** 边框是否圆形，否为多边形 */
     private var isRound = true
+    /** 边框路径 */
+    private var mFramePath = Path()
     /** 边框画笔 */
     private var mFramePaint: Paint? = null
 
@@ -51,6 +54,8 @@ open class RadarnyView : View {
     private var mInnerFramePercentage = DEF_INNER_FRAME_PERCENTAGE
     /** 内圈边框绘画风格 */
     private var mInnerFramePaintStyle = Paint.Style.STROKE
+    /** 内圈边框路径 */
+    private var mInnerFramePath = Path()
     /** 内圈边框画笔 */
     private var mInnerFramePaint: Paint? = null
 
@@ -66,11 +71,15 @@ open class RadarnyView : View {
 
     /** 文字颜色 */
     @ColorInt
-    private var mLabelColor = Color.BLACK
+    private var mTextColor = Color.BLACK
     /** 文字宽度 */
-    private var mLabelStrokeWidth = DEF_FRAME_STROKE_WIDTH
+    private var mTextStrokeWidth = DEF_FRAME_STROKE_WIDTH
+    /** 文字大小 */
+    private var mTextSize = DEF_TEXT_SIZE
+    /** 文字离边框占比 */
+    private var mTextPercentage = DEF_TEXT_PERCENTAGE
     /** 文字画笔 */
-    private var mLabelPaint: Paint? = null
+    private var mTextPaint: Paint? = null
 
     /** 数据列表 */
     private var mList = ArrayList<RadarnyBean>()
@@ -78,6 +87,23 @@ open class RadarnyView : View {
     private var mPointPairList = ArrayList<Pair<Double, Double>>()
     /** 内圈数据点位列表 */
     private var mPointInnerPairList = ArrayList<Pair<Double, Double>>()
+    /** 总大小 */
+    private var mMaxValue = 0f
+
+    /** 数值颜色 */
+    @ColorInt
+    private var mValueColor = Color.argb(125, 30, 110, 210)
+    /** 数值线宽度 */
+    private var mValueStrokeWidth = DEF_FRAME_STROKE_WIDTH
+    /** 数值绘画风格 */
+    private var mValuePaintStyle = Paint.Style.FILL
+    /** 数值路径 */
+    private val mValuePath = Path()
+    /** 数值画笔 */
+    private var mValuePaint: Paint? = null
+
+    /** 是否显示图片 */
+    private var isShowSrc: Boolean = false
 
     /** 控件边长 */
     private var mSideLength = -1
@@ -141,7 +167,8 @@ open class RadarnyView : View {
         mFramePaint = createFramePaint()
         mInnerFramePaint = createInnerFramePaint()
         mInnerLinePaint = createInnerLinePaint()
-        mLabelPaint = createLabelPaint()
+        mTextPaint = createTextPaint()
+        mValuePaint = createValuePaint()
         if (list.size >= 3){
             mList = list
         }
@@ -151,6 +178,7 @@ open class RadarnyView : View {
         val list = ArrayList<RadarnyBean>()
         for (i in 0 until 5) {
             list.add(RadarnyBean("label$i", 0f))
+//            list.add(RadarnyBean("label$i", (i * 20).toFloat()))
         }
         return list
     }
@@ -188,14 +216,26 @@ open class RadarnyView : View {
         return paint
     }
 
-    private fun createLabelPaint(): Paint {
+    private fun createTextPaint(): Paint {
         val paint = Paint()
-        paint.strokeWidth = mLabelStrokeWidth.toFloat()
-        paint.color = mLabelColor
+        paint.strokeWidth = mTextStrokeWidth.toFloat()
+        paint.color = mTextColor
+        paint.textSize = mTextSize
         paint.isAntiAlias = true
         paint.strokeCap = Paint.Cap.ROUND
         paint.shader = null
-        paint.style = Paint.Style.STROKE
+        paint.style = Paint.Style.FILL
+        return paint
+    }
+
+    private fun createValuePaint(): Paint {
+        val paint = Paint()
+        paint.strokeWidth = mValueStrokeWidth.toFloat()
+        paint.color = mValueColor
+        paint.isAntiAlias = true
+        paint.strokeCap = Paint.Cap.ROUND
+        paint.shader = null
+        paint.style = mValuePaintStyle
         return paint
     }
 
@@ -247,16 +287,16 @@ open class RadarnyView : View {
         if (isRound) {
             drawFrameCircle(canvas)
         } else {
-            drawFrameLine(canvas, mFramePaint, mPointPairList) // 外边框
-            drawFrameLine(canvas, mInnerFramePaint, mPointInnerPairList) // 内边框
+            drawFrameLine(canvas, mFramePaint, mFramePath, mPointPairList) // 外边框
+            drawFrameLine(canvas, mInnerFramePaint, mInnerFramePath, mPointInnerPairList) // 内边框
         }
-        mPointPairList.forEachIndexed { i, pair ->
+        mList.forEachIndexed { i, bean ->
             if (isShowLine){
-                drawLine(canvas, pair.first, pair.second)
+                drawLine(canvas, mPointPairList[i].first, mPointPairList[i].second)
             }
-            drawLabel(canvas, mList[i], pair.first, pair.second)
+            drawLabel(canvas, bean, i)
         }
-
+        drawPolygon(canvas, mList)
     }
 
     /** 画圆边框 */
@@ -270,29 +310,21 @@ open class RadarnyView : View {
     }
 
     /** 画线边框 */
-    private fun drawFrameLine(canvas: Canvas, paints: Paint?, pointPairList: ArrayList<Pair<Double, Double>>) {
+    private fun drawFrameLine(canvas: Canvas, paints: Paint?, path: Path, list: ArrayList<Pair<Double, Double>>) {
         val paint = paints ?: return
-        var lastX = 0.0
-        var lastY = 0.0
-        var firstX = 0.0
-        var firstY = 0.0
-        for (i in 0 until pointPairList.size) {
-            val x = pointPairList[i].first
-            val y = pointPairList[i].second
-            if (i == 0) {//第一个点位保存数据
-                lastX = x
-                lastY = y
-                firstX = x
-                firstY = y
+        for (i in 0 until list.size) {
+            val x = list[i].first.toFloat()
+            val y = list[i].second.toFloat()
+            if (i == 0){
+                path.moveTo(x, y)
                 continue
             }
-            canvas.drawLine(lastX.toFloat(), lastY.toFloat(), x.toFloat(), y.toFloat(), paint)
-            if (i == pointPairList.size - 1) {//最后一个点位收边
-                canvas.drawLine(x.toFloat(), y.toFloat(), firstX.toFloat(), firstY.toFloat(), paint)
+            path.lineTo(x, y)
+            if (i == list.size - 1) {
+                path.close()
             }
-            lastX = x
-            lastY = y
         }
+        canvas.drawPath(path, paint)
     }
 
     /** 画内部线 */
@@ -302,45 +334,52 @@ open class RadarnyView : View {
     }
 
     /** 画标签文字 */
-    private fun drawLabel(canvas: Canvas, bean: RadarnyBean, x: Double, y: Double) {
-        val paint = mLabelPaint ?: return
+    private fun drawLabel(canvas: Canvas, bean: RadarnyBean, i: Int) {
+        val paint = mTextPaint ?: return
         val labelRect = Rect()
         val valueRect = Rect()
         paint.getTextBounds(bean.label, 0, bean.label.length, labelRect)
         paint.getTextBounds(bean.value.toString(), 0, bean.value.toString().length, valueRect)
 
+        val pair = getXY(i, mRadius, mTextPercentage)
+        val x = pair.first
+        val y = pair.second
 
+        // 画标签
+        canvas.drawText(
+            bean.label,
+            x.toFloat() - labelRect.width() / 2f,
+            y.toFloat() - labelRect.height() / 2f,
+            paint
+        )
+        // 画数值
+        canvas.drawText(
+            bean.value.toString(),
+            x.toFloat() - valueRect.width() / 2f,
+            y.toFloat() + valueRect.height(),
+            paint
+        )
+    }
 
-        //        if (null == mLabels || mLabels!!.size != mSides) {
-        //            return
-        //        }
-        //
-        //        val maxLength = mActuallyRadius
-        //
-        //        val strNumericValues = DecimalFormat("##").format((mAnimationProgress!![i] * 100).toDouble())
-        //
-        //        val textBoundLabel = Rect()
-        //        val textBoundNumeric = Rect()
-        //
-        //        mPaintLabels!!.getTextBounds(mLabels!![i], 0, mLabels!![i]!!.length, textBoundLabel)
-        //        mPaintLabels!!.getTextBounds(strNumericValues, 0, strNumericValues.length, textBoundNumeric)
-        //
-        //        val actuallyValues = (maxLength + textBoundLabel.width()).toFloat()
-        //
-        //        val x = (cos(angle) * actuallyValues + mViewCenter).toInt().toFloat()
-        //        val y = (sin(angle) * actuallyValues + mViewCenter).toInt().toFloat()
-        //
-        //        //Draw Label
-        //        canvas.drawText(
-        //            mLabels!![i].toString(),
-        //            x - textBoundLabel.width() / 2f, y + textBoundLabel.height() / 2f, mPaintLabels!!
-        //        )
-        //        //Draw Progress Value
-        //        canvas.drawText(
-        //            strNumericValues,
-        //            x - textBoundNumeric.width() / 2f, y - textBoundLabel.height() / 2f, mPaintLabels!!
-        //        )
-
+    /** 绘制多边形 */
+    private fun drawPolygon(canvas: Canvas, list: ArrayList<RadarnyBean>) {
+        val paint = mValuePaint ?: return
+        for (i in 0 until list.size){
+            val offset = mRadius * mInnerFramePercentage//偏移量
+            val r = if (mMaxValue == 0f) offset else (mRadius - offset) * list[i].value / mMaxValue + offset
+            val pair = getXY(i, r, 1f)
+            val x = pair.first.toFloat()
+            val y = pair.second.toFloat()
+            if (i == 0) {
+                mValuePath.moveTo(x, y)
+                continue
+            }
+            mValuePath.lineTo(x, y)
+            if (i == list.size - 1) {
+                mValuePath.close()
+            }
+        }
+        canvas.drawPath(mValuePath, paint)
     }
 
     /** 锚定参数 */
@@ -353,21 +392,26 @@ open class RadarnyView : View {
             mFramePadding = mSideLength / 6
             mRadius = mCenter - mFramePadding//获取半径
             mAverageAngle = 360 / mList.size
-            mList.forEachIndexed { i, radarnyBean ->
-                val angle = mAverageAngle * i + DEF_START_ANGLE
-                var x = cos(Math.toRadians(angle)) * mRadius + mCenter
-                var y = sin(Math.toRadians(angle)) * mRadius + mCenter
-                mPointPairList.add(Pair(x, y))
-                x = cos(Math.toRadians(angle)) * mRadius * mInnerFramePercentage + mCenter
-                y = sin(Math.toRadians(angle)) * mRadius * mInnerFramePercentage + mCenter
-                mPointInnerPairList.add(Pair(x, y))
+            var max = 0f
+            mList.forEachIndexed { i, bean ->
+                mPointPairList.add(getXY(i, mRadius, 1.0f))
+                mPointInnerPairList.add(getXY(i, mRadius, mInnerFramePercentage))
+                if (max < bean.value){
+                    max = bean.value
+                }
+            }
+            if (mMaxValue == 0f){
+                mMaxValue = max
             }
         }
     }
 
-
-
-
-
+    /** 根据比例获取XY坐标 */
+    private fun getXY(index: Int, radius: Float, percentage: Float): Pair<Double, Double> {
+        val angle = mAverageAngle * index + DEF_START_ANGLE
+        val x = cos(Math.toRadians(angle)) * radius * percentage + mCenter
+        val y = sin(Math.toRadians(angle)) * radius * percentage + mCenter
+        return Pair(x, y)
+    }
 
 }
