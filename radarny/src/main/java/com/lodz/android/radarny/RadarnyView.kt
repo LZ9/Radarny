@@ -6,6 +6,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
@@ -23,12 +24,13 @@ open class RadarnyView : View {
         /** 默认边框间距 */
         const val DEF_INNER_FRAME_PERCENTAGE = 0.3f
         /** 默认文字离边框的间距 */
-        const val DEF_TEXT_PERCENTAGE = 1.2f
+        const val DEF_TEXT_PERCENTAGE = 1.3f
+        /** 默认图片背景间距 */
+        const val DEF_SRC_BG_PERCENTAGE = 0.6f
         /** 默认起始角度 */
         const val DEF_START_ANGLE = -90.0
         /** 默认文字大小 */
-        const val DEF_TEXT_SIZE = 35f
-
+        const val DEF_TEXT_SIZE = 35
     }
 
     /** 边框颜色 */
@@ -36,8 +38,6 @@ open class RadarnyView : View {
     private var mFrameColor = Color.BLACK
     /** 边框线宽度 */
     private var mFrameStrokeWidth = DEF_FRAME_STROKE_WIDTH
-    /** 边框间距 */
-    private var mFramePadding = -1
     /** 边框是否圆形，否为多边形 */
     private var isRound = true
     /** 边框路径 */
@@ -72,8 +72,6 @@ open class RadarnyView : View {
     /** 文字颜色 */
     @ColorInt
     private var mTextColor = Color.BLACK
-    /** 文字宽度 */
-    private var mTextStrokeWidth = DEF_FRAME_STROKE_WIDTH
     /** 文字大小 */
     private var mTextSize = DEF_TEXT_SIZE
     /** 文字离边框占比 */
@@ -102,8 +100,20 @@ open class RadarnyView : View {
     /** 数值画笔 */
     private var mValuePaint: Paint? = null
 
+    /** 图片背景颜色 */
+    @ColorInt
+    private var mSrcBgColor = Color.WHITE
+    /** 图片背景占比 */
+    private var mSrcBgPercentage = DEF_SRC_BG_PERCENTAGE
     /** 是否显示图片 */
-    private var isShowSrc: Boolean = false
+    private var isShowSrc: Boolean = true
+    /** 图片资源id */
+    @DrawableRes
+    private var mSrcResId = android.R.drawable.ic_menu_camera
+    /** 图片Bitmap */
+    private var mSrcBitmap: Bitmap? = null
+    /** 图片画笔 */
+    private var mSrcPaint: Paint? = null
 
     /** 控件边长 */
     private var mSideLength = -1
@@ -113,6 +123,8 @@ open class RadarnyView : View {
     private var mRadius = -1f
     /** 每个点位的平均角度 */
     private var mAverageAngle = -1
+    /** 边框间距 */
+    private var mFramePadding = -1
 
 
     constructor(context: Context?) : super(context){
@@ -151,34 +163,41 @@ open class RadarnyView : View {
         if (attrs != null) {
             typedArray = context.obtainStyledAttributes(attrs, R.styleable.RadarnyView)
         }
-
-
-
-
-
-
-
-        typedArray?.recycle()
-
-    }
-
-    fun build(list: ArrayList<RadarnyBean>) {
-        mSideLength = -1
-        mFramePaint = createFramePaint()
-        mInnerFramePaint = createInnerFramePaint()
-        mInnerLinePaint = createInnerLinePaint()
-        mTextPaint = createTextPaint()
-        mValuePaint = createValuePaint()
-        if (list.size >= 3){
-            mList = list
+        mFrameColor = typedArray?.getColor(R.styleable.RadarnyView_frameColor, Color.BLACK) ?: Color.BLACK
+        mFrameStrokeWidth = typedArray?.getInt(R.styleable.RadarnyView_frameWidth, DEF_FRAME_STROKE_WIDTH) ?: DEF_FRAME_STROKE_WIDTH
+        isRound = typedArray?.getBoolean(R.styleable.RadarnyView_isRound, true) ?: true
+        mInnerFrameColor = typedArray?.getColor(R.styleable.RadarnyView_innerFrameColor, Color.BLACK) ?: Color.BLACK
+        mInnerFrameStrokeWidth= typedArray?.getInt(R.styleable.RadarnyView_innerFrameWidth, DEF_FRAME_STROKE_WIDTH) ?: DEF_FRAME_STROKE_WIDTH
+        mInnerFramePercentage = typedArray?.getFloat(R.styleable.RadarnyView_innerFramePercentage, DEF_INNER_FRAME_PERCENTAGE) ?: DEF_INNER_FRAME_PERCENTAGE
+        isShowLine = typedArray?.getBoolean(R.styleable.RadarnyView_isShowLine, true) ?: true
+        mInnerLineColor = typedArray?.getColor(R.styleable.RadarnyView_lineColor, Color.BLACK) ?: Color.BLACK
+        mInnerLineStrokeWidth = typedArray?.getInt(R.styleable.RadarnyView_lineWidth, DEF_FRAME_STROKE_WIDTH) ?: DEF_FRAME_STROKE_WIDTH
+        mTextColor = typedArray?.getColor(R.styleable.RadarnyView_textColor, Color.BLACK) ?: Color.BLACK
+        mTextSize = typedArray?.getDimensionPixelSize(R.styleable.RadarnyView_textSize, DEF_TEXT_SIZE) ?: DEF_TEXT_SIZE
+        mTextPercentage = typedArray?.getFloat(R.styleable.RadarnyView_textPercentage, DEF_TEXT_PERCENTAGE) ?: DEF_TEXT_PERCENTAGE
+        mMaxValue = typedArray?.getFloat(R.styleable.RadarnyView_maxValue, 0f) ?: 0f
+        val defColor = Color.argb(125, 30, 110, 210)
+        mValueColor = typedArray?.getColor(R.styleable.RadarnyView_valueColor, defColor) ?:defColor
+        mValueStrokeWidth = typedArray?.getInt(R.styleable.RadarnyView_valueWidth, DEF_FRAME_STROKE_WIDTH) ?: DEF_FRAME_STROKE_WIDTH
+        val valuePaintStyle = typedArray?.getInt(R.styleable.RadarnyView_valuePaintStyle, Paint.Style.FILL.ordinal) ?: Paint.Style.FILL.ordinal
+        for (style in Paint.Style.values()) {
+            if (valuePaintStyle == style.ordinal){
+                mValuePaintStyle = style
+            }
         }
+        mSrcBgColor = typedArray?.getColor(R.styleable.RadarnyView_srcBgColor, Color.WHITE) ?:Color.WHITE
+        mSrcBgPercentage = typedArray?.getFloat(R.styleable.RadarnyView_srcBgPercentage, DEF_SRC_BG_PERCENTAGE) ?: DEF_SRC_BG_PERCENTAGE
+        isShowSrc = typedArray?.getBoolean(R.styleable.RadarnyView_isShowSrc, true) ?: true
+        mSrcResId = typedArray?.getResourceId(R.styleable.RadarnyView_src, android.R.drawable.ic_menu_camera) ?: android.R.drawable.ic_menu_camera
+        typedArray?.recycle()
     }
 
+    /** 创建默认数据 */
     private fun createDefData(): ArrayList<RadarnyBean> {
         val list = ArrayList<RadarnyBean>()
         for (i in 0 until 5) {
-            list.add(RadarnyBean("label$i", 0f))
-//            list.add(RadarnyBean("label$i", (i * 20).toFloat()))
+            list.add(RadarnyBean("label$i", i * 20.0f))
+//            list.add(RadarnyBean("label$i", 0f))
         }
         return list
     }
@@ -218,9 +237,8 @@ open class RadarnyView : View {
 
     private fun createTextPaint(): Paint {
         val paint = Paint()
-        paint.strokeWidth = mTextStrokeWidth.toFloat()
         paint.color = mTextColor
-        paint.textSize = mTextSize
+        paint.textSize = mTextSize.toFloat()
         paint.isAntiAlias = true
         paint.strokeCap = Paint.Cap.ROUND
         paint.shader = null
@@ -239,27 +257,50 @@ open class RadarnyView : View {
         return paint
     }
 
-    /** 边框是否圆形 */
-    fun isFrameRound() = isRound
-
-    /** 设置边框是否圆形[isRound]，否为多边形 */
-    fun setFrameRound(isRound: Boolean): RadarnyView {
-        this.isRound = isRound
-        return this
+    private fun createSrcPaint(): Paint {
+        val paint = Paint()
+        paint.color = mSrcBgColor
+        paint.isAntiAlias = true
+        paint.strokeCap = Paint.Cap.ROUND
+        paint.shader = null
+        paint.style = Paint.Style.FILL
+        return paint
     }
 
-    /** 获取边框颜色 */
+    /** 完成数据[list]构建 */
+    fun build(list: ArrayList<RadarnyBean>) {
+        mSideLength = -1
+        mFramePaint = createFramePaint()
+        mInnerFramePaint = createInnerFramePaint()
+        mInnerLinePaint = createInnerLinePaint()
+        mTextPaint = createTextPaint()
+        mValuePaint = createValuePaint()
+        mSrcPaint = createSrcPaint()
+        if (list.size >= 3){
+            mList = list
+        }
+        if (mSrcBitmap == null){
+            mSrcBitmap = BitmapFactory.decodeResource(resources, mSrcResId)
+        }
+    }
+
+    /** 外边框是否圆形 */
+    fun isFrameRound() = isRound
+
+    /** 获取外边框颜色 */
     fun getFrameColor() = mFrameColor
 
-    /** 获取边框线宽度 */
+    /** 获取外边框线宽度 */
     fun getFrameStrokeWidth() = mFrameStrokeWidth
 
-    /** 设置边框属性：颜色[color]，线宽[] */
+    /** 设置外边框属性：颜色[color]，是否圆形[isRound]，线宽[strokeWidth] */
     fun setFrame(
         @ColorInt color: Int,
+        isRound: Boolean = true,
         strokeWidth: Int = DEF_FRAME_STROKE_WIDTH,
     ): RadarnyView {
         mFrameColor = color
+        this.isRound = isRound
         mFrameStrokeWidth = strokeWidth
         return this
     }
@@ -297,6 +338,9 @@ open class RadarnyView : View {
             drawLabel(canvas, bean, i)
         }
         drawPolygon(canvas, mList)
+        if (isShowSrc) {
+            drawSrc(canvas)
+        }
     }
 
     /** 画圆边框 */
@@ -380,6 +424,22 @@ open class RadarnyView : View {
             }
         }
         canvas.drawPath(mValuePath, paint)
+    }
+
+    /** 绘制图片 */
+    private fun drawSrc(canvas: Canvas) {
+        val bitmap = mSrcBitmap ?: return
+        val paint = mSrcPaint ?: return
+        val offset = mRadius * mInnerFramePercentage//偏移量
+        canvas.drawCircle(mCenter, mCenter, offset * mSrcBgPercentage, paint)
+
+
+        canvas.drawBitmap(
+            bitmap,
+            mCenter - bitmap.width / 2,
+            mCenter - bitmap.height / 2,
+            paint
+        )
     }
 
     /** 锚定参数 */

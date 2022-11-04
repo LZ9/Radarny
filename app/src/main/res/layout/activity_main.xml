@@ -1,11 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <com.lodz.android.radarny.RadarnyView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:frameColor="@color/color_a9e0e2"
+        app:frameWidth="6"
+        app:innerFrameColor="@color/color_e1e1e1"
+        app:innerFramePercentage="0.4"
+        app:innerFrameWidth="3"
+        app:isRound="false"
+        app:isShowLine="true"
+        app:isShowSrc="true"
+        app:lineColor="@color/color_e1e1e1"
+        app:lineWidth="3"
+        app:maxValue="100"
+        app:src="@drawable/pandora_ic_launcher"
+        app:srcBgColor="@color/white"
+        app:srcBgPercentage="0.6"
+        app:textColor="@color/color_a9e0e2"
+        app:textPercentage="1.2"
+        app:valueColor="@color/color_7fa9e0e2"
+        app:valuePaintStyle="fill"
+        app:valueWidth="5" />
 
 </LinearLayout>

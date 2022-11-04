@@ -1,10 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!--侧滑菜单-->
+    <!--雷达图表-->
     <declare-styleable name="RadarnyView">
+        <attr name="frameColor" format="color" />
+        <attr name="frameWidth" format="integer" />
+        <attr name="isRound" format="boolean" />
+        <attr name="innerFrameColor" format="color" />
+        <attr name="innerFrameWidth" format="integer" />
+        <attr name="innerFramePercentage" format="float" />
+        <attr name="isShowLine" format="boolean" />
+        <attr name="lineColor" format="color" />
+        <attr name="lineWidth" format="integer" />
+        <attr name="textColor" format="color" />
+        <attr name="textSize" format="dimension" />
+        <attr name="textPercentage" format="float" />
+        <attr name="maxValue" format="float" />
+        <attr name="valueColor" format="color" />
+        <attr name="valueWidth" format="integer" />
+        <attr name="valuePaintStyle" format="integer">
+            <enum name="fill" value="0" />
+            <enum name="stroke" value="1" />
+            <enum name="fill_and_stroke" value="2" />
+        </attr>
+        <attr name="srcBgColor" format="color" />
+        <attr name="srcBgPercentage" format="float" />
+        <attr name="isShowSrc" format="boolean" />
+        <attr name="src" format="reference" />
 
     </declare-styleable>
-
-
 </resources>
