@@ -26,6 +26,7 @@
         <attr name="srcBgPercentage" format="float" />
         <attr name="isShowSrc" format="boolean" />
         <attr name="src" format="reference" />
-
+        <attr name="srcWidth" format="dimension" />
+        <attr name="srcHeight" format="dimension" />
     </declare-styleable>
 </resources>

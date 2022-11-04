@@ -110,6 +110,10 @@ open class RadarnyView : View {
     /** 图片资源id */
     @DrawableRes
     private var mSrcResId = android.R.drawable.ic_menu_camera
+    /** 图片宽度 */
+    private var mSrcWidth = 0
+    /** 图片高度 */
+    private var mSrcHeight = 0
     /** 图片Bitmap */
     private var mSrcBitmap: Bitmap? = null
     /** 图片画笔 */
@@ -117,8 +121,10 @@ open class RadarnyView : View {
 
     /** 控件边长 */
     private var mSideLength = -1
-    /** 控件中点 */
-    private var mCenter = -1f
+    /** 控件中点X */
+    private var mCenterX = -1f
+    /** 控件中点Y */
+    private var mCenterY = -1f
     /** 控件半径 */
     private var mRadius = -1f
     /** 每个点位的平均角度 */
@@ -189,6 +195,8 @@ open class RadarnyView : View {
         mSrcBgPercentage = typedArray?.getFloat(R.styleable.RadarnyView_srcBgPercentage, DEF_SRC_BG_PERCENTAGE) ?: DEF_SRC_BG_PERCENTAGE
         isShowSrc = typedArray?.getBoolean(R.styleable.RadarnyView_isShowSrc, true) ?: true
         mSrcResId = typedArray?.getResourceId(R.styleable.RadarnyView_src, android.R.drawable.ic_menu_camera) ?: android.R.drawable.ic_menu_camera
+        mSrcWidth = typedArray?.getDimensionPixelSize(R.styleable.RadarnyView_srcWidth, 0) ?: 0
+        mSrcHeight = typedArray?.getDimensionPixelSize(R.styleable.RadarnyView_srcHeight, 0) ?: 0
         typedArray?.recycle()
     }
 
@@ -196,8 +204,7 @@ open class RadarnyView : View {
     private fun createDefData(): ArrayList<RadarnyBean> {
         val list = ArrayList<RadarnyBean>()
         for (i in 0 until 5) {
-            list.add(RadarnyBean("label$i", i * 20.0f))
-//            list.add(RadarnyBean("label$i", 0f))
+            list.add(RadarnyBean("label$i", 0f))
         }
         return list
     }
@@ -347,10 +354,10 @@ open class RadarnyView : View {
     private fun drawFrameCircle(canvas: Canvas) {
         val paint = mFramePaint ?: return
         // 外圈
-        canvas.drawCircle(mCenter, mCenter, mRadius, paint)
+        canvas.drawCircle(mCenterX, mCenterY, mRadius, paint)
         val innerPaint = mInnerFramePaint ?: return
         // 内圈
-        canvas.drawCircle(mCenter, mCenter, mRadius * mInnerFramePercentage, innerPaint)
+        canvas.drawCircle(mCenterX, mCenterY, mRadius * mInnerFramePercentage, innerPaint)
     }
 
     /** 画线边框 */
@@ -374,7 +381,7 @@ open class RadarnyView : View {
     /** 画内部线 */
     private fun drawLine(canvas: Canvas, x: Double, y: Double) {
         val paint = mInnerLinePaint ?: return
-        canvas.drawLine(mCenter, mCenter, x.toFloat(), y.toFloat(), paint)
+        canvas.drawLine(mCenterX, mCenterY, x.toFloat(), y.toFloat(), paint)
     }
 
     /** 画标签文字 */
@@ -431,15 +438,19 @@ open class RadarnyView : View {
         val bitmap = mSrcBitmap ?: return
         val paint = mSrcPaint ?: return
         val offset = mRadius * mInnerFramePercentage//偏移量
-        canvas.drawCircle(mCenter, mCenter, offset * mSrcBgPercentage, paint)
+        canvas.drawCircle(mCenterX, mCenterY, offset * mSrcBgPercentage, paint)
 
+        val srcWidth = if (mSrcWidth == 0) bitmap.width else mSrcWidth
+        val srcHeight = if (mSrcHeight == 0) bitmap.height else mSrcHeight
 
-        canvas.drawBitmap(
-            bitmap,
-            mCenter - bitmap.width / 2,
-            mCenter - bitmap.height / 2,
-            paint
+        val src = Rect(0, 0, bitmap.width, bitmap.height)
+        val dst = Rect(
+            (mCenterX - srcWidth / 2).toInt(),
+            (mCenterY - srcHeight / 2).toInt(),
+            (mCenterX + srcWidth / 2).toInt(),
+            (mCenterY + srcHeight / 2).toInt()
         )
+        canvas.drawBitmap(bitmap, src, dst, paint)
     }
 
     /** 锚定参数 */
@@ -448,9 +459,21 @@ open class RadarnyView : View {
             mPointPairList.clear()
             mPointInnerPairList.clear()
             mSideLength = min(width, height)//获取最短边长
-            mCenter = mSideLength / 2.0f//获取中心位置
             mFramePadding = mSideLength / 6
-            mRadius = mCenter - mFramePadding//获取半径
+            //获取中心位置
+            if (width == height) {
+                mCenterX = mSideLength / 2.0f
+                mCenterY = mSideLength / 2.0f
+                mRadius = mCenterX - mFramePadding//获取半径
+            } else if (width > height) {//横向矩形X轴要加上偏移量
+                mCenterX = mSideLength / 2.0f + (width - height) / 2f
+                mCenterY = mSideLength / 2.0f
+                mRadius = mCenterY - mFramePadding//获取半径
+            } else {//纵向矩形Y轴要加上偏移量
+                mCenterX = mSideLength / 2.0f
+                mCenterY = mSideLength / 2.0f + (height - width) / 2f
+                mRadius = mCenterX - mFramePadding//获取半径
+            }
             mAverageAngle = 360 / mList.size
             var max = 0f
             mList.forEachIndexed { i, bean ->
@@ -469,8 +492,8 @@ open class RadarnyView : View {
     /** 根据比例获取XY坐标 */
     private fun getXY(index: Int, radius: Float, percentage: Float): Pair<Double, Double> {
         val angle = mAverageAngle * index + DEF_START_ANGLE
-        val x = cos(Math.toRadians(angle)) * radius * percentage + mCenter
-        val y = sin(Math.toRadians(angle)) * radius * percentage + mCenter
+        val x = cos(Math.toRadians(angle)) * radius * percentage + mCenterX
+        val y = sin(Math.toRadians(angle)) * radius * percentage + mCenterY
         return Pair(x, y)
     }
 

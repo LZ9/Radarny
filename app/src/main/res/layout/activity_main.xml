@@ -6,8 +6,9 @@
     android:orientation="vertical">
 
     <com.lodz.android.radarny.RadarnyView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_gravity="center"
         app:frameColor="@color/color_a9e0e2"
         app:frameWidth="6"
         app:innerFrameColor="@color/color_e1e1e1"
@@ -19,9 +20,11 @@
         app:lineColor="@color/color_e1e1e1"
         app:lineWidth="3"
         app:maxValue="100"
-        app:src="@drawable/pandora_ic_launcher"
+        app:src="@mipmap/ic_launcher_round"
         app:srcBgColor="@color/white"
         app:srcBgPercentage="0.6"
+        app:srcHeight="32dp"
+        app:srcWidth="32dp"
         app:textColor="@color/color_a9e0e2"
         app:textPercentage="1.2"
         app:valueColor="@color/color_7fa9e0e2"
