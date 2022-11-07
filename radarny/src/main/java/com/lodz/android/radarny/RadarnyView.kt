@@ -59,7 +59,7 @@ open class RadarnyView : View {
     /** 内圈边框画笔 */
     private var mInnerFramePaint: Paint? = null
 
-    /** 是否现实内部线 */
+    /** 是否显示内部线 */
     private var isShowLine = true
     /** 内部线颜色 */
     @ColorInt
@@ -96,7 +96,7 @@ open class RadarnyView : View {
     /** 数值绘画风格 */
     private var mValuePaintStyle = Paint.Style.FILL
     /** 数值路径 */
-    private val mValuePath = Path()
+    private var mValuePath = Path()
     /** 数值画笔 */
     private var mValuePaint: Paint? = null
 
@@ -128,7 +128,7 @@ open class RadarnyView : View {
     /** 控件半径 */
     private var mRadius = -1f
     /** 每个点位的平均角度 */
-    private var mAverageAngle = -1
+    private var mAverageAngle = -1.0
     /** 边框间距 */
     private var mFramePadding = -1
 
@@ -158,10 +158,10 @@ open class RadarnyView : View {
         init(attrs)
     }
 
-
     private fun init(attrs: AttributeSet?) {
         configLayout(attrs)
-        build(createDefData())
+        setData(createDefData())
+        build()
     }
 
     private fun configLayout(attrs: AttributeSet?) {
@@ -274,55 +274,248 @@ open class RadarnyView : View {
         return paint
     }
 
-    /** 完成数据[list]构建 */
-    fun build(list: ArrayList<RadarnyBean>) {
+    /** 完成构建 */
+    fun build() {
         mSideLength = -1
         mFramePaint = createFramePaint()
+        mFramePath = Path()
         mInnerFramePaint = createInnerFramePaint()
+        mInnerFramePath = Path()
         mInnerLinePaint = createInnerLinePaint()
         mTextPaint = createTextPaint()
         mValuePaint = createValuePaint()
+        mValuePath = Path()
         mSrcPaint = createSrcPaint()
-        if (list.size >= 3){
-            mList = list
+        if (mList.isEmpty()){
+            mList = createDefData()
         }
         if (mSrcBitmap == null){
             mSrcBitmap = BitmapFactory.decodeResource(resources, mSrcResId)
         }
+        invalidate()
+    }
+
+    /** 设置数据[list] */
+    fun setData(list: ArrayList<RadarnyBean>): RadarnyView {
+        if (list.size >= 3) {
+            mList = list
+        }
+        return this
     }
 
     /** 外边框是否圆形 */
     fun isFrameRound() = isRound
 
+    /** 设置外边框是否圆形[isRound] */
+    fun setFrameRound(isRound: Boolean): RadarnyView {
+        this.isRound = isRound
+        return this
+    }
+
     /** 获取外边框颜色 */
     fun getFrameColor() = mFrameColor
+
+    /** 设置外边框颜色[color] */
+    fun setFrameColor(@ColorInt color: Int): RadarnyView {
+        mFrameColor = color
+        return this
+    }
 
     /** 获取外边框线宽度 */
     fun getFrameStrokeWidth() = mFrameStrokeWidth
 
-    /** 设置外边框属性：颜色[color]，是否圆形[isRound]，线宽[strokeWidth] */
-    fun setFrame(
-        @ColorInt color: Int,
-        isRound: Boolean = true,
-        strokeWidth: Int = DEF_FRAME_STROKE_WIDTH,
-    ): RadarnyView {
-        mFrameColor = color
-        this.isRound = isRound
+    /** 设置外边框线宽度[strokeWidth] */
+    fun setFrameStrokeWidth(strokeWidth: Int): RadarnyView {
         mFrameStrokeWidth = strokeWidth
         return this
     }
 
-    /** 设置内圈边框属性：颜色[color]，线宽[] */
-    fun setInnerFrame(
-        @ColorInt color: Int,
-        strokeWidth: Int = DEF_FRAME_STROKE_WIDTH,
-        paintStyle: Paint.Style = Paint.Style.STROKE,
-        percentage: Float = DEF_INNER_FRAME_PERCENTAGE
-    ): RadarnyView {
+    /** 获取内圈边框颜色 */
+    fun getInnerFrameColor() = mInnerFrameColor
+
+    /** 设置内圈边框颜色[color] */
+    fun setInnerFrameColor(@ColorInt color: Int): RadarnyView {
         mInnerFrameColor = color
+        return this
+    }
+
+    /** 获取内圈边框线宽度 */
+    fun getInnerFrameStrokeWidth() = mInnerFrameStrokeWidth
+
+    /** 设置内圈边框线宽度[strokeWidth] */
+    fun setInnerFrameStrokeWidth(strokeWidth: Int): RadarnyView {
         mInnerFrameStrokeWidth = strokeWidth
-        mInnerFramePaintStyle = paintStyle
+        return this
+    }
+
+    /** 获取内圈边框占比 */
+    fun getInnerFramePercentage() = mInnerFramePercentage
+
+    /** 设置内圈边框占比[percentage] */
+    fun setInnerFramePercentage(percentage: Float): RadarnyView {
         mInnerFramePercentage = percentage
+        return this
+    }
+
+    /** 获取内圈边框绘画风格 */
+    fun getInnerFramePaintStyle() = mInnerFramePaintStyle
+
+    /** 设置内圈边框绘画风格[style] */
+    fun setInnerFramePaintStyle(style: Paint.Style): RadarnyView {
+        mInnerFramePaintStyle = style
+        return this
+    }
+
+    /** 是否显示内部线 */
+    fun isShowLine() = isShowLine
+
+    /** 设置是否显示内部线[isShow] */
+    fun setShowLine(isShow: Boolean): RadarnyView {
+        this.isShowLine = isShow
+        return this
+    }
+
+    /** 获取内部线颜色 */
+    fun getInnerLineColor() = mInnerLineColor
+
+    /** 设置内部线颜色[color] */
+    fun setInnerLineColor(@ColorInt color: Int): RadarnyView {
+        mInnerLineColor = color
+        return this
+    }
+
+    /** 获取内部线宽度 */
+    fun getInnerLineStrokeWidth() = mInnerLineStrokeWidth
+
+    /** 设置内部线宽度[strokeWidth] */
+    fun setInnerLineStrokeWidth(strokeWidth: Int): RadarnyView {
+        mInnerLineStrokeWidth = strokeWidth
+        return this
+    }
+
+    /** 获取文字颜色 */
+    fun getTextColor() = mTextColor
+
+    /** 设置文字颜色[color] */
+    fun setTextColor(@ColorInt color: Int): RadarnyView {
+        mTextColor = color
+        return this
+    }
+
+    /** 获取文字大小 */
+    fun getTextSize() = mTextSize
+
+    /** 设置文字大小[size] */
+    fun setTextSize(size: Int): RadarnyView {
+        mTextSize = size
+        return this
+    }
+
+    /** 获取文字离边框占比 */
+    fun getTextPercentage() = mTextPercentage
+
+    /** 设置文字离边框占比[percentage] */
+    fun setTextPercentage(percentage: Float): RadarnyView {
+        mTextPercentage = percentage
+        return this
+    }
+
+    /** 获取总大小 */
+    fun getMaxValue() = mMaxValue
+
+    /** 设置总大小[max] */
+    fun setMaxValue(max: Float): RadarnyView {
+        mMaxValue = max
+        return this
+    }
+
+    /** 获取数值颜色 */
+    fun getValueColor() = mValueColor
+
+    /** 设置数值颜色[color] */
+    fun setValueColor(@ColorInt color: Int): RadarnyView {
+        mValueColor = color
+        return this
+    }
+
+    /** 获取数值线宽度 */
+    fun getValueStrokeWidth() = mValueStrokeWidth
+
+    /** 设置数值线宽度[strokeWidth] */
+    fun setValueStrokeWidth(strokeWidth: Int): RadarnyView {
+        mValueStrokeWidth = strokeWidth
+        return this
+    }
+
+    /** 获取数值绘画风格 */
+    fun getValuePaintStyle() = mValuePaintStyle
+
+    /** 设置数值绘画风格[style] */
+    fun setValuePaintStyle(style: Paint.Style): RadarnyView {
+        mValuePaintStyle = style
+        return this
+    }
+
+    /** 获取图片背景颜色 */
+    fun getSrcBgColor() = mSrcBgColor
+
+    /** 设置图片背景颜色[color] */
+    fun setSrcBgColor(@ColorInt color: Int): RadarnyView {
+        mSrcBgColor = color
+        return this
+    }
+
+    /** 获取图片背景占比 */
+    fun getSrcBgPercentage() = mSrcBgPercentage
+
+    /** 设置图片背景占比[percentage] */
+    fun setSrcBgPercentage(percentage: Float): RadarnyView {
+        mSrcBgPercentage = percentage
+        return this
+    }
+
+    /** 是否显示图片 */
+    fun isShowSrc() = isShowSrc
+
+    /** 设置是否显示图片[isShow] */
+    fun setShowSrc(isShow: Boolean): RadarnyView {
+        this.isShowSrc = isShow
+        return this
+    }
+
+    /** 获取图片资源id */
+    fun getSrcResId() = mSrcResId
+
+    /** 设置图片资源id[id] */
+    fun setSrcResId(@DrawableRes id: Int): RadarnyView {
+        mSrcResId = id
+        return this
+    }
+
+    /** 获取图片宽度 */
+    fun getSrcWidth() = mSrcWidth
+
+    /** 设置图片宽度[width] */
+    fun setSrcWidth(width: Int): RadarnyView {
+        mSrcWidth = width
+        return this
+    }
+
+    /** 获取图片高度 */
+    fun getSrcHeight() = mSrcHeight
+
+    /** 设置图片高度[width] */
+    fun setSrcHeight(height: Int): RadarnyView {
+        mSrcHeight = height
+        return this
+    }
+
+    /** 获取图片Bitmap */
+    fun getSrcBitmap() = mSrcBitmap
+
+    /** 设置图片Bitmap[bitmap] */
+    fun setSrcBitmap(bitmap: Bitmap): RadarnyView {
+        mSrcBitmap = bitmap
         return this
     }
 
@@ -474,7 +667,7 @@ open class RadarnyView : View {
                 mCenterY = mSideLength / 2.0f + (height - width) / 2f
                 mRadius = mCenterX - mFramePadding//获取半径
             }
-            mAverageAngle = 360 / mList.size
+            mAverageAngle = 360.0 / mList.size
             var max = 0f
             mList.forEachIndexed { i, bean ->
                 mPointPairList.add(getXY(i, mRadius, 1.0f))

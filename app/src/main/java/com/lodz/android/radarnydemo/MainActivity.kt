@@ -6,7 +6,10 @@ import com.lodz.android.corekt.anko.getColorCompat
 import com.lodz.android.corekt.anko.toastShort
 import com.lodz.android.pandora.base.activity.BaseActivity
 import com.lodz.android.pandora.utils.viewbinding.bindingLayout
+import com.lodz.android.radarny.RadarnyBean
 import com.lodz.android.radarnydemo.databinding.ActivityMainBinding
+import java.util.ArrayList
+import java.util.Random
 
 class MainActivity : BaseActivity() {
 
@@ -47,10 +50,23 @@ class MainActivity : BaseActivity() {
                 num = 3
                 toastShort(R.string.main_correct_count)
             }
+            if (num > 100) {
+                num = 100
+                toastShort(R.string.main_correct_count)
+            }
             mCount = num
             mBinding.countEdit.setText(mCount.toString())
-            toastShort(mCount.toString())
+            mBinding.countEdit.setSelection(mCount.toString().length)
+            mBinding.radarnyView.setData(createData(mCount)).build()
         }
+    }
+
+    private fun createData(count: Int): ArrayList<RadarnyBean> {
+        val list = ArrayList<RadarnyBean>()
+        for (i in 0 until count) {
+            list.add(RadarnyBean("label$i", Random().nextInt(101).toFloat()))
+        }
+        return list
     }
 
     override fun initData() {
