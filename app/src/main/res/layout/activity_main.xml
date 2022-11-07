@@ -6,9 +6,11 @@
     android:orientation="vertical">
 
     <com.lodz.android.radarny.RadarnyView
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:id="@+id/radarny_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_gravity="center"
+        android:layout_weight="1"
         app:frameColor="@color/color_a9e0e2"
         app:frameWidth="6"
         app:innerFrameColor="@color/color_e1e1e1"
@@ -27,8 +29,52 @@
         app:srcWidth="32dp"
         app:textColor="@color/color_a9e0e2"
         app:textPercentage="1.2"
+        app:textSize="11sp"
         app:valueColor="@color/color_7fa9e0e2"
         app:valuePaintStyle="fill"
         app:valueWidth="5" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/delete_btn"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:text="@string/main_delete" />
+
+        <EditText
+            android:id="@+id/count_edit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:hint="@string/main_input_hint"
+            android:importantForAutofill="no"
+            android:inputType="number"
+            android:text="3"
+            android:textSize="12sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/add_btn"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:text="@string/main_add" />
+
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/update_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/main_update" />
 
 </LinearLayout>

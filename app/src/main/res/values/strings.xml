@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Radarny</string>
+
+    <string name="main_input_hint">请输入指标数量（不少于3）</string>
+    <string name="main_add">+</string>
+    <string name="main_delete">-</string>
+    <string name="main_update">更新</string>
+    <string name="main_correct_count">已为您修正指标数量</string>
 </resources>
