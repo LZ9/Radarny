@@ -6,10 +6,10 @@ Radarny是一个简单的雷达多维图表控件，支持动画渲染。 我在
 4. 图表任意宽高下均自动居中
 
 ## 目录
-- [1、引用方式](https://github.com/LZ9/Conjurer#1引用方式)
-- [2、效果图](https://github.com/LZ9/Conjurer#2内部依赖库)
-- [3、使用教程](https://github.com/LZ9/Conjurer#3使用教程)
-- [扩展](https://github.com/LZ9/Conjurer#扩展)
+- [1、引用方式](https://github.com/LZ9/Radarny#1引用方式)
+- [2、效果图](https://github.com/LZ9/Radarny#2效果图)
+- [3、使用教程](https://github.com/LZ9/Radarny#3使用教程)
+- [扩展](https://github.com/LZ9/Radarny#扩展)
 
 ## 1、引用方式
 由于jcenter删库跑路，请大家添加mavenCentral依赖
@@ -101,8 +101,8 @@ Radarny的代码设置方法如下：
 
 ## 扩展
 
-- [更新记录](https://github.com/LZ9/Conjurer/blob/master/conjurer/readme_update.md)
-- [回到顶部](https://github.com/LZ9/Conjurer#conjurer库)
+- [更新记录](https://github.com/LZ9/Radarny/blob/master/radarny/readme_update.md)
+- [回到顶部](https://github.com/LZ9/Radarny#radarny)
 
 ## License
 - [Apache Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
