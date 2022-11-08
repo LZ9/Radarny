@@ -113,7 +113,7 @@ open class RadarnyView : View {
     private var isShowSrc: Boolean = true
     /** 图片资源id */
     @DrawableRes
-    private var mSrcResId = android.R.drawable.ic_menu_camera
+    private var mSrcResId = 0
     /** 图片宽度 */
     private var mSrcWidth = 0
     /** 图片高度 */
@@ -205,7 +205,7 @@ open class RadarnyView : View {
         mSrcBgColor = typedArray?.getColor(R.styleable.RadarnyView_srcBgColor, Color.WHITE) ?:Color.WHITE
         mSrcBgPercentage = typedArray?.getFloat(R.styleable.RadarnyView_srcBgPercentage, DEF_SRC_BG_PERCENTAGE) ?: DEF_SRC_BG_PERCENTAGE
         isShowSrc = typedArray?.getBoolean(R.styleable.RadarnyView_isShowSrc, true) ?: true
-        mSrcResId = typedArray?.getResourceId(R.styleable.RadarnyView_src, android.R.drawable.ic_menu_camera) ?: android.R.drawable.ic_menu_camera
+        mSrcResId = typedArray?.getResourceId(R.styleable.RadarnyView_src, 0) ?: 0
         mSrcWidth = typedArray?.getDimensionPixelSize(R.styleable.RadarnyView_srcWidth, 0) ?: 0
         mSrcHeight = typedArray?.getDimensionPixelSize(R.styleable.RadarnyView_srcHeight, 0) ?: 0
         mAnimDuration = typedArray?.getInt(R.styleable.RadarnyView_animDuration, 0) ?: 0
@@ -304,7 +304,7 @@ open class RadarnyView : View {
         if (mList.isEmpty()) {
             mList = createDefData()
         }
-        if (mSrcBitmap == null) {
+        if (mSrcResId != 0){
             mSrcBitmap = BitmapFactory.decodeResource(resources, mSrcResId)
         }
         if (mAnimDuration > 0) {

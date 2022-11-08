@@ -1,8 +1,13 @@
 package com.lodz.android.radarnydemo
 
+import android.graphics.Color
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
+import com.lodz.android.corekt.anko.dp2px
 import com.lodz.android.corekt.anko.getColorCompat
+import com.lodz.android.corekt.anko.sp2px
 import com.lodz.android.corekt.anko.toastShort
 import com.lodz.android.pandora.base.activity.BaseActivity
 import com.lodz.android.pandora.utils.viewbinding.bindingLayout
@@ -25,6 +30,34 @@ class MainActivity : BaseActivity() {
         getTitleBarLayout().setTitleName(R.string.app_name)
         getTitleBarLayout().needBackButton(false)
         getTitleBarLayout().setBackgroundColor(getColorCompat(R.color.color_a9e0e2))
+        initRadarnyView()
+    }
+
+    private fun initRadarnyView() {
+        mBinding.defRadarnyView
+            .setMaxValue(100f)
+            .setAnimDuration(400)
+            .setFrameColor(ContextCompat.getColor(getContext(), R.color.color_d04741))
+            .setFrameRound(false)
+            .setFrameStrokeWidth(5)
+            .setInnerFrameColor(ContextCompat.getColor(getContext(), R.color.color_f0f0f0))
+            .setInnerFrameStrokeWidth(3)
+            .setInnerFramePercentage(0.3f)
+            .setInnerLineColor(ContextCompat.getColor(getContext(), R.color.color_f0f0f0))
+            .setInnerLineStrokeWidth(3)
+            .setShowLine(true)
+            .setTextColor(ContextCompat.getColor(getContext(), R.color.color_d04741))
+            .setTextPercentage(1.2f)
+            .setTextSize(sp2px(11))
+            .setValueColor(ContextCompat.getColor(getContext(), R.color.color_7fd04741))
+            .setValueStrokeWidth(5)
+            .setValuePaintStyle(Paint.Style.FILL)
+            .setShowSrc(true)
+            .setSrcResId(R.drawable.ic_pokeball)
+            .setSrcWidth(dp2px(25))
+            .setSrcHeight(dp2px(25))
+            .setSrcBgColor(Color.WHITE)
+            .setSrcBgPercentage(0.7f)
     }
 
     override fun setListeners() {
@@ -57,7 +90,7 @@ class MainActivity : BaseActivity() {
             mCount = num
             mBinding.countEdit.setText(mCount.toString())
             mBinding.countEdit.setSelection(mCount.toString().length)
-            mBinding.radarnyView.setData(createData(mCount)).build()
+            updateRadarny(mCount)
         }
     }
 
@@ -72,8 +105,12 @@ class MainActivity : BaseActivity() {
     override fun initData() {
         super.initData()
         mCount = mBinding.countEdit.text.toString().toInt()
-        mBinding.radarnyView.setData(createData(mCount)).build()
+        updateRadarny(mCount)
         showStatusCompleted()
     }
 
+    private fun updateRadarny(count: Int) {
+        mBinding.radarnyView.setData(createData(count)).build()
+        mBinding.defRadarnyView.setData(createData(count)).build()
+    }
 }

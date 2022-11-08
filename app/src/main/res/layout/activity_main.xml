@@ -29,7 +29,7 @@
             android:hint="@string/main_input_hint"
             android:importantForAutofill="no"
             android:inputType="number"
-            android:text="13"
+            android:text="5"
             android:textSize="12sp" />
 
         <com.google.android.material.button.MaterialButton
@@ -48,34 +48,54 @@
         android:layout_marginEnd="8dp"
         android:text="@string/main_update" />
 
-    <com.lodz.android.radarny.RadarnyView
-        android:id="@+id/radarny_view"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        app:animDuration="500"
-        app:frameColor="@color/color_a9e0e2"
-        app:frameWidth="5"
-        app:innerFrameColor="@color/color_f0f0f0"
-        app:innerFramePercentage="0.3"
-        app:innerFrameWidth="3"
-        app:isRound="true"
-        app:isShowLine="true"
-        app:isShowSrc="true"
-        app:lineColor="@color/color_f0f0f0"
-        app:lineWidth="3"
-        app:maxValue="100"
-        app:src="@mipmap/ic_launcher_round"
-        app:srcBgColor="@color/white"
-        app:srcBgPercentage="0.7"
-        app:srcHeight="28dp"
-        app:srcWidth="28dp"
-        app:textColor="@color/color_a9e0e2"
-        app:textPercentage="1.2"
-        app:textSize="11sp"
-        app:valueColor="@color/color_7fa9e0e2"
-        app:valuePaintStyle="fill"
-        app:valueWidth="5" />
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.lodz.android.radarny.RadarnyView
+                android:id="@+id/radarny_view"
+                android:layout_width="match_parent"
+                android:layout_height="280dp"
+                android:layout_gravity="center"
+                app:animDuration="500"
+                app:frameColor="@color/color_a9e0e2"
+                app:frameWidth="5"
+                app:innerFrameColor="@color/color_f0f0f0"
+                app:innerFramePercentage="0.3"
+                app:innerFrameWidth="3"
+                app:isRound="true"
+                app:isShowLine="true"
+                app:isShowSrc="true"
+                app:lineColor="@color/color_f0f0f0"
+                app:lineWidth="3"
+                app:maxValue="100"
+                app:src="@mipmap/ic_launcher_round"
+                app:srcBgColor="@color/white"
+                app:srcBgPercentage="0.7"
+                app:srcHeight="25dp"
+                app:srcWidth="25dp"
+                app:textColor="@color/color_a9e0e2"
+                app:textPercentage="1.2"
+                app:textSize="11sp"
+                app:valueColor="@color/color_7fa9e0e2"
+                app:valuePaintStyle="fill"
+                app:valueWidth="5" />
+
+            <com.lodz.android.radarny.RadarnyView
+                android:id="@+id/def_radarny_view"
+                android:layout_width="match_parent"
+                android:layout_height="280dp"
+                android:layout_gravity="center" />
+
+        </LinearLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
+
 
 </LinearLayout>
