@@ -734,7 +734,7 @@ open class RadarnyView : View {
                     max = bean.value
                 }
             }
-            if (mMaxValue == 0f){
+            if (mMaxValue <= max){
                 mMaxValue = max
             }
         }
