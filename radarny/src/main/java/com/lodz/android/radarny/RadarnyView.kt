@@ -1,12 +1,16 @@
 package com.lodz.android.radarny
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
+import java.text.DecimalFormat
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
@@ -119,6 +123,13 @@ open class RadarnyView : View {
     /** 图片画笔 */
     private var mSrcPaint: Paint? = null
 
+    /** 动画时长（0表示不启动动画） */
+    private var mAnimDuration = 0
+    /** 动画进度百分比 */
+    private var mValueProgressPercentage  = 1f
+    /** 是否动画正在运行 */
+    private var isAnimRunning = false
+
     /** 控件边长 */
     private var mSideLength = -1
     /** 控件中点X */
@@ -197,6 +208,7 @@ open class RadarnyView : View {
         mSrcResId = typedArray?.getResourceId(R.styleable.RadarnyView_src, android.R.drawable.ic_menu_camera) ?: android.R.drawable.ic_menu_camera
         mSrcWidth = typedArray?.getDimensionPixelSize(R.styleable.RadarnyView_srcWidth, 0) ?: 0
         mSrcHeight = typedArray?.getDimensionPixelSize(R.styleable.RadarnyView_srcHeight, 0) ?: 0
+        mAnimDuration = typedArray?.getInt(R.styleable.RadarnyView_animDuration, 0) ?: 0
         typedArray?.recycle()
     }
 
@@ -276,6 +288,9 @@ open class RadarnyView : View {
 
     /** 完成构建 */
     fun build() {
+        if (isAnimRunning){//若动画未结束不响应更改
+            return
+        }
         mSideLength = -1
         mFramePaint = createFramePaint()
         mFramePath = Path()
@@ -286,14 +301,46 @@ open class RadarnyView : View {
         mValuePaint = createValuePaint()
         mValuePath = Path()
         mSrcPaint = createSrcPaint()
-        if (mList.isEmpty()){
+        if (mList.isEmpty()) {
             mList = createDefData()
         }
-        if (mSrcBitmap == null){
+        if (mSrcBitmap == null) {
             mSrcBitmap = BitmapFactory.decodeResource(resources, mSrcResId)
+        }
+        if (mAnimDuration > 0) {
+            doAnim(mAnimDuration)
         }
         invalidate()
     }
+
+    /** 使用动画展示 */
+    private fun doAnim(duration: Int) {
+        isAnimRunning = true
+        val animator = ValueAnimator.ofFloat(0f, 1f)
+        animator.duration = duration.toLong()
+        animator.interpolator = AccelerateDecelerateInterpolator()
+        animator.addUpdateListener {
+            mValueProgressPercentage = it.animatedValue as Float
+            invalidate()
+        }
+        animator.addListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator) {
+            }
+
+            override fun onAnimationEnd(animation: Animator) {
+                isAnimRunning = false
+            }
+
+            override fun onAnimationCancel(animation: Animator) {
+                isAnimRunning = false
+            }
+
+            override fun onAnimationRepeat(animation: Animator) {
+            }
+        })
+        animator.start()
+    }
+
 
     /** 设置数据[list] */
     fun setData(list: ArrayList<RadarnyBean>): RadarnyView {
@@ -519,6 +566,15 @@ open class RadarnyView : View {
         return this
     }
 
+    /** 获取动画时长（0表示不启动动画） */
+    fun getAnimDuration() = mAnimDuration
+
+    /** 设置动画时长[duration]，0表示不启动动画 */
+    fun setAnimDuration(duration: Int): RadarnyView {
+        this.mAnimDuration = duration
+        return this
+    }
+
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         if (canvas == null) {
@@ -580,10 +636,11 @@ open class RadarnyView : View {
     /** 画标签文字 */
     private fun drawLabel(canvas: Canvas, bean: RadarnyBean, i: Int) {
         val paint = mTextPaint ?: return
+        val value = formatValue(bean.value * mValueProgressPercentage)
         val labelRect = Rect()
         val valueRect = Rect()
         paint.getTextBounds(bean.label, 0, bean.label.length, labelRect)
-        paint.getTextBounds(bean.value.toString(), 0, bean.value.toString().length, valueRect)
+        paint.getTextBounds(value.toString(), 0, value.toString().length, valueRect)
 
         val pair = getXY(i, mRadius, mTextPercentage)
         val x = pair.first
@@ -598,7 +655,7 @@ open class RadarnyView : View {
         )
         // 画数值
         canvas.drawText(
-            bean.value.toString(),
+            value.toString(),
             x.toFloat() - valueRect.width() / 2f,
             y.toFloat() + valueRect.height(),
             paint
@@ -609,8 +666,9 @@ open class RadarnyView : View {
     private fun drawPolygon(canvas: Canvas, list: ArrayList<RadarnyBean>) {
         val paint = mValuePaint ?: return
         for (i in 0 until list.size){
+            val value = formatValue(list[i].value * mValueProgressPercentage)
             val offset = mRadius * mInnerFramePercentage//偏移量
-            val r = if (mMaxValue == 0f) offset else (mRadius - offset) * list[i].value / mMaxValue + offset
+            val r = if (mMaxValue == 0f) offset else (mRadius - offset) * value / mMaxValue + offset
             val pair = getXY(i, r, 1f)
             val x = pair.first.toFloat()
             val y = pair.second.toFloat()
@@ -690,4 +748,9 @@ open class RadarnyView : View {
         return Pair(x, y)
     }
 
+    /** 格式化一位小数 */
+    private fun formatValue(value: Float): Float {
+        val df = DecimalFormat("#.0")
+        return df.format(value).toFloat()
+    }
 }

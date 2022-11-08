@@ -28,5 +28,6 @@
         <attr name="src" format="reference" />
         <attr name="srcWidth" format="dimension" />
         <attr name="srcHeight" format="dimension" />
+        <attr name="animDuration" format="integer" />
     </declare-styleable>
 </resources>

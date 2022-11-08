@@ -72,6 +72,7 @@ class MainActivity : BaseActivity() {
     override fun initData() {
         super.initData()
         mCount = mBinding.countEdit.text.toString().toInt()
+        mBinding.radarnyView.setData(createData(mCount)).build()
         showStatusCompleted()
     }
 
