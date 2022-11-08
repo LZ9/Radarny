@@ -22,12 +22,13 @@ repositories {
 ```
 在你需要调用的module里的dependencies中加入以下依赖
 ```
-implementation 'ink.lodz:radarny:1.0.0'
+implementation 'ink.lodz:radarny:1.0.1'
 ```
 
 ## 2、效果图
 大致效果图：
-![效果图](https://github.com/LZ9/Radarny/blob/master/img/SVID_20221108_151519_1.gif?raw=true)
+
+<img src="https://github.com/LZ9/Radarny/blob/master/img/SVID_20221108_151519_1.gif?raw=true" height="600"/>
 
 ## 3、使用教程
 Radarny的代码设置方法如下：
