@@ -1,5 +1,5 @@
 # Radarny
-Radarny是一个简单的雷达多为图表控件，支持动画渲染。 我在[TacticalTwerking](https://github.com/TacticalTwerking)的[AbilityChartView](https://github.com/TacticalTwerking/AbilityChartView)基础上做了一些优化和扩展：
+Radarny是一个简单的雷达多维图表控件，支持动画渲染。 我在[TacticalTwerking](https://github.com/TacticalTwerking)的[AbilityChartView](https://github.com/TacticalTwerking/AbilityChartView)基础上做了一些优化和扩展：
 1. 增加了更多的属性和参数配置，并支持用代码进行设置 
 2. 支持圆形边框或多边形边框
 3. 数值渲染支持线条和平面
