@@ -27,7 +27,7 @@ implementation 'ink.lodz:radarny:1.0.1'
 
 ## 2、效果图
 <div align="center">
-    <img src="https://github.com/LZ9/Radarny/blob/master/img/SVID_20221108_151519_1.gif?raw=true" height="800"/>
+    <img src="https://github.com/LZ9/Radarny/blob/master/img/SVID_20221108_151519_1.gif?raw=true" height="600"/>
 </div>
 
 ## 3、使用教程
