@@ -581,12 +581,6 @@ open class RadarnyView : View {
             return
         }
         anchorParam()
-        if (isRound) {
-            drawFrameCircle(canvas)
-        } else {
-            drawFrameLine(canvas, mFramePaint, mFramePath, mPointPairList) // 外边框
-            drawFrameLine(canvas, mInnerFramePaint, mInnerFramePath, mPointInnerPairList) // 内边框
-        }
         mList.forEachIndexed { i, bean ->
             if (isShowLine){
                 drawLine(canvas, mPointPairList[i].first, mPointPairList[i].second)
@@ -596,6 +590,12 @@ open class RadarnyView : View {
         drawPolygon(canvas, mList)
         if (isShowSrc) {
             drawSrc(canvas)
+        }
+        if (isRound) {
+            drawFrameCircle(canvas)
+        } else {
+            drawFrameLine(canvas, mFramePaint, mFramePath, mPointPairList) // 外边框
+            drawFrameLine(canvas, mInnerFramePaint, mInnerFramePath, mPointInnerPairList) // 内边框
         }
     }
 
