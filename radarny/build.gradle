@@ -6,13 +6,13 @@ plugins {
 
 android {
     namespace 'com.lodz.android.radarny'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         minSdk 21
         targetSdk 33
-        versionCode 3
-        versionName "1.0.2" //成功上传
+        versionCode 4
+        versionName "1.0.3" //未上传
 
         consumerProguardFiles "consumer-rules.pro"
     }

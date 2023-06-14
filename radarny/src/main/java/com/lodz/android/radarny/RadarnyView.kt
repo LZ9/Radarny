@@ -575,11 +575,8 @@ open class RadarnyView : View {
         return this
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        if (canvas == null) {
-            return
-        }
         anchorParam()
         mList.forEachIndexed { i, bean ->
             if (isShowLine){

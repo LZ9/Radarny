@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace 'com.lodz.android.radarnydemo'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.lodz.android.radarnydemo"
