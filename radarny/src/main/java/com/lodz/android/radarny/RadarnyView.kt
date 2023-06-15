@@ -584,15 +584,15 @@ open class RadarnyView : View {
             }
             drawLabel(canvas, bean, i)
         }
-        drawPolygon(canvas, mList)
-        if (isShowSrc) {
-            drawSrc(canvas)
-        }
         if (isRound) {
             drawFrameCircle(canvas)
         } else {
             drawFrameLine(canvas, mFramePaint, mFramePath, mPointPairList) // 外边框
             drawFrameLine(canvas, mInnerFramePaint, mInnerFramePath, mPointInnerPairList) // 内边框
+        }
+        drawPolygon(canvas, mList)
+        if (isShowSrc) {
+            drawSrc(canvas)
         }
     }
 
