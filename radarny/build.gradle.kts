@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
 }
+apply(from = "publish.gradle.kts")
 
 android {
     namespace = "com.lodz.android.radarny"
