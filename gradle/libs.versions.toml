@@ -2,11 +2,14 @@
 agp = "8.5.1"
 kotlin = "1.9.23"
 pandora = "2.0.8"
+radarny = "1.0.3"
 annotation = "1.8.0"
 
 [libraries]
 #组件库
 ink-lodz-pandora = { group = "ink.lodz", name = "pandora", version.ref = "pandora" }
+ink-lodz-radarny = { group = "ink.lodz", name = "radarny", version.ref = "radarny" }
+
 #注解依赖
 androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
 

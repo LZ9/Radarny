@@ -4,14 +4,12 @@ apply(plugin = "maven-publish")
 apply(plugin = "signing")
 
 
-val sourceSets = extensions.getByName("sourceSets") as SourceSetContainer
-
 val androidSourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
-    println("sourceSets : $sourceSets")
-//    from(sourceSets.getByName("main").java.srcDirs)
-//    exclude("**/R.class")
-//    exclude("**/BuildConfig.class")
+    from(file("src/main/java"))
+
+    exclude("**/R.class")
+    exclude("**/BuildConfig.class")
 }
 
 val PUBLISH_GROUP_ID = "ink.lodz"

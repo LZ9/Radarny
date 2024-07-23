@@ -39,5 +39,6 @@ android {
 
 dependencies {
     implementation(libs.ink.lodz.pandora)
+//    implementation(libs.ink.lodz.radarny)
     implementation(project(":radarny"))
 }
