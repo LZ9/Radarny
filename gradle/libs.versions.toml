@@ -2,7 +2,7 @@
 agp = "8.5.1"
 kotlin = "1.9.23"
 pandora = "2.0.8"
-radarny = "1.0.3"
+radarny = "1.0.4"
 annotation = "1.8.0"
 
 [libraries]

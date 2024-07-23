@@ -14,7 +14,7 @@ val androidSourcesJar by tasks.registering(Jar::class) {
 
 val PUBLISH_GROUP_ID = "ink.lodz"
 val PUBLISH_ARTIFACT_ID = "radarny"
-val PUBLISH_VERSION = "1.0.3"
+val PUBLISH_VERSION = "1.0.4"
 
 val SIGNING_KEYID = "signing.keyId"
 val SIGNING_PASSWORD = "signing.password"
@@ -34,7 +34,6 @@ if (secretPropsFile.exists()) {
     val p = Properties()
     p.load(secretPropsFile.inputStream())
     p.forEach { (key, value) ->
-        println("Key: $key, Value: $value")
         when(key){
             SIGNING_KEYID -> {keyId = value.toString()}
             SIGNING_PASSWORD -> {password = value.toString()}
@@ -113,6 +112,10 @@ configure<PublishingExtension> {
 }
 
 configure<SigningExtension> {
+    extra["signing.keyId"] = keyId
+    extra["signing.password"] = password
+    extra["signing.secretKeyRingFile"] = secretKeyRingFile
+
     val pubExt = checkNotNull(extensions.findByType(PublishingExtension::class.java))
     val publication = pubExt.publications["release"]
     sign(publication)

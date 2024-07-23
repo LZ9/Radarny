@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
 }
-apply(from = "publish.gradle.kts")
+//apply(from = "publish.gradle.kts")
 
 android {
     namespace = "com.lodz.android.radarny"
@@ -11,7 +11,7 @@ android {
     defaultConfig {
         minSdk = 21
         buildConfigField("int", "versionCode", "5")
-        buildConfigField("String", "versionName", "\"1.0.4\"") //未上传
+        buildConfigField("String", "versionName", "\"1.0.4\"") //已上传
 
         consumerProguardFiles("consumer-rules.pro")
     }
