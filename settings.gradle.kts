@@ -9,6 +9,11 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+
+        maven { setUrl("https://maven.aliyun.com/repository/google") }
+        maven { setUrl("https://maven.aliyun.com/repository/gradle-plugin") }
+        maven { setUrl("https://maven.aliyun.com/repository/public") }
+        maven { setUrl("https://maven.aliyun.com/repository/jcenter") }
     }
 }
 dependencyResolutionManagement {
@@ -16,6 +21,11 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+
+        maven { setUrl("https://maven.aliyun.com/repository/google") }
+        maven { setUrl("https://maven.aliyun.com/repository/gradle-plugin") }
+        maven { setUrl("https://maven.aliyun.com/repository/public") }
+        maven { setUrl("https://maven.aliyun.com/repository/jcenter") }
     }
 }
 
