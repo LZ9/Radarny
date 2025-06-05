@@ -14,7 +14,7 @@ val androidSourcesJar by tasks.registering(Jar::class) {
 
 val PUBLISH_GROUP_ID = "ink.lodz"
 val PUBLISH_ARTIFACT_ID = "radarny"
-val PUBLISH_VERSION = "1.0.4"
+val PUBLISH_VERSION = "1.0.6"
 
 val SIGNING_KEYID = "signing.keyId"
 val SIGNING_PASSWORD = "signing.password"
