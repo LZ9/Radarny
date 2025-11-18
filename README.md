@@ -22,7 +22,7 @@ repositories {
 ```
 在你需要调用的module里的dependencies中加入以下依赖
 ```
-implementation 'ink.lodz:radarny:1.0.4'
+implementation 'ink.lodz:radarny:1.0.7'
 ```
 
 ## 2、效果图

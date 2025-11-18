@@ -10,8 +10,8 @@ android {
 
     defaultConfig {
         minSdk = 21
-        buildConfigField("int", "versionCode", "7")
-        buildConfigField("String", "versionName", "\"1.0.6\"") //成功上传
+        buildConfigField("int", "versionCode", "8")
+        buildConfigField("String", "versionName", "\"1.0.7\"") //成功上传
 
         consumerProguardFiles("consumer-rules.pro")
     }

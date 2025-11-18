@@ -14,7 +14,7 @@ val androidSourcesJar by tasks.registering(Jar::class) {
 
 val PUBLISH_GROUP_ID = "ink.lodz"
 val PUBLISH_ARTIFACT_ID = "radarny"
-val PUBLISH_VERSION = "1.0.6"
+val PUBLISH_VERSION = "1.0.7"
 
 val SIGNING_KEYID = "signing.keyId"
 val SIGNING_PASSWORD = "signing.password"
@@ -94,8 +94,8 @@ configure<PublishingExtension> {
     repositories {
         maven {
             name = "mavenCentral"
-            val releasesRepoUrl = "https://s01.oss.sonatype.org/content/repositories/releases/"
-            val snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            val releasesRepoUrl = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
+            val snapshotsRepoUrl = "https://central.sonatype.com/repository/maven-snapshots/"
             var repoUrl = if (PUBLISH_VERSION.endsWith("SNAPSHOT")) {
                 snapshotsRepoUrl
             } else {
