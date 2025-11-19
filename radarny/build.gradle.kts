@@ -43,7 +43,7 @@ dependencies {
 //----------------------- 发布到 Maven Central  ------------------------------
 val PUBLISH_GROUP_ID = "ink.lodz"
 val PUBLISH_ARTIFACT_ID = "radarny"
-val PUBLISH_VERSION = "1.0.8" // 成功上传
+val PUBLISH_VERSION = "1.0.8"
 
 mavenPublishing {
     publishToMavenCentral(automaticRelease = true)
