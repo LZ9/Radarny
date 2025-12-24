@@ -5,11 +5,11 @@ plugins {
 
 android {
     namespace = "com.lodz.android.radarnydemo"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.lodz.android.radarnydemo"
-        minSdk = 21
+        minSdk = 23
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
