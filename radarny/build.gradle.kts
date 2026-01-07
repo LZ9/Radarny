@@ -21,10 +21,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     compileOptions {
@@ -55,7 +52,7 @@ mavenPublishing {
 
         name.set(PUBLISH_ARTIFACT_ID)
         description.set("This is a simple radar chart component.")
-        inceptionYear.set("2025")
+        inceptionYear.set("2026")
         url.set("https://github.com/LZ9/Radarny")
         licenses {
             license {
